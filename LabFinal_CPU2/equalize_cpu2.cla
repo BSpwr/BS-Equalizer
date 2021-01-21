@@ -1,0 +1,65 @@
+#include "cla_shared_cpu2.h"
+
+static inline float DirectForm1Process(IIR_FILTER* filter, float sample) {
+    float cascaded_sample = sample;
+
+    for (uint16_t stage_num = 0; stage_num < IIR_FILTER_NUM_STAGES;
+         stage_num++) {
+        // [X1 X2 Y1 Y2]
+        float* regs = filter->buffer[stage_num];
+
+        // [B0 B1 B2 1 A1 A2]
+        const float* taps = filter->taps[stage_num];
+
+        // calculate the feed forward using the B terms: (X0 * B0) + (X1 * B1) +
+        // (X2
+        // * B2)
+        float feed_forward =
+            cascaded_sample * taps[0] + regs[0] * taps[1] + regs[1] * taps[2];
+        // calculate the feedback using the A terms: (Y1 * -A1) + (Y2 * -A2)
+        float feedback = regs[2] * -taps[4] + regs[3] * -taps[5];
+        // output is feed forward terms + feedback terms (A0 is always 1, so the
+        // output is not getting scaled)
+        float output = feed_forward + feedback;
+
+        regs[1] = regs[0];          // X2 = X1
+        regs[0] = cascaded_sample;  // X1 = X0
+
+        regs[3] = regs[2];  // Y2 = Y1
+        regs[2] = output;   // Y1 = output
+
+        // feed output of filter into other filter
+        cascaded_sample = output;
+    }
+
+    return cascaded_sample;
+}
+
+interrupt void Cla1Task1(void) {
+    __mdebugstop();
+
+    output_sample_right = DirectForm1Process(&h1, input_sample_right) * gains_cla[0];
+    output_sample_right += DirectForm1Process(&h2, input_sample_right) * gains_cla[1];
+    output_sample_right += DirectForm1Process(&h3, input_sample_right) * gains_cla[2];
+    output_sample_right += DirectForm1Process(&h4, input_sample_right) * gains_cla[3];
+    output_sample_right += DirectForm1Process(&h5, input_sample_right) * gains_cla[4];
+    output_sample_right += DirectForm1Process(&h6, input_sample_right) * gains_cla[5];
+    output_sample_right += DirectForm1Process(&h7, input_sample_right) * gains_cla[6];
+    output_sample_right += DirectForm1Process(&h8, input_sample_right) * gains_cla[7];
+    output_sample_right += DirectForm1Process(&h9, input_sample_right) * gains_cla[8];
+    output_sample_right += DirectForm1Process(&h10, input_sample_right) * gains_cla[9];
+}
+
+interrupt void Cla1Task2(void) {}
+
+interrupt void Cla1Task3(void) {}
+
+interrupt void Cla1Task4(void) {}
+
+interrupt void Cla1Task5(void) {}
+
+interrupt void Cla1Task6(void) {}
+
+interrupt void Cla1Task7(void) {}
+
+interrupt void Cla1Task8(void) {}
