@@ -1,6 +1,8 @@
 # BS Equalizer (IIR Graphic Equalizer)
 
-## Author | Purpose
+![](https://raw.githubusercontent.com/BSpwr/BS-Equalizer/main/gui.png)
+
+## Author
 - Boris Ermakov-Spektor
 - Final Project
 - EEL4511: Real-time DSP Applications
@@ -32,11 +34,11 @@ communications.
 - LabFinalGUI contains the Python GUI used to communicate with the board.
 - Matlab_Filter_Design contains the MATLAB scripts used to generate the IIR filters.
 
-## Note
+### Note
 
 For this to run in realtime, the Code Composer Projects must be compiled with `-O3` and `--fp_mode=relaxed`
 
-## Libraries
+### Libraries
 
 The Code Composer Projects require the following TI library includes:
 
@@ -44,3 +46,4 @@ The Code Composer Projects require the following TI library includes:
 - C2000Ware_3_02_00_00/device_support/f2837xd/headers/include
 - C2000Ware_3_02_00_00/device_support/f2837xd/common/include
 - C2000Ware_3_02_00_00/driverlib/f2837xd/driverlib
+
